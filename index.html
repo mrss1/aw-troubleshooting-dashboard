@@ -16,11 +16,20 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
+        background-image: url('dot-matrix.png'); /* Subtle dot matrix background */
     }
 
     h1 {
         text-align: center;
         color: #4A90E2;
+    }
+
+    p.intro {
+        text-align: center;
+        color: #666;
+        max-width: 600px;
+        font-size: 18px;
+        margin-bottom: 30px;
     }
 
     .container {
@@ -30,6 +39,7 @@
         padding: 20px;
         width: 100%;
         max-width: 600px;
+        position: relative;
     }
 
     .tabs {
@@ -122,24 +132,79 @@
         background-color: #4A90E2;
         box-shadow: 1px 0 1 0 rgba(0, 0, 0, 0.171);
     }
+
+    .device-selector {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .device-icon {
+        cursor: pointer;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .device-icon img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .device-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .faq-section {
+        margin-top: 30px;
+        text-align: left;
+        max-width: 600px;
+    }
+
+    .faq-item {
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+
+    .faq-item h3 {
+        color: #4A90E2;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .faq-content {
+        display: none;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .faq-item.active .faq-content {
+        display: block;
+    }
 </style>
 </head>
 <body>
 
 <div class="container">
     <h1>AirWatch Troubleshooting Dashboard</h1>
+    <p class="intro">Welcome to the AirWatch Troubleshooting Dashboard. Select your device below to access specific troubleshooting guides and helpful resources for your device.</p>
 
-    <div class="form-group">
-        <label for="deviceType">Device Type</label>
-        <select id="deviceType" onchange="updateDeviceType()">
-            <option value="">Select Device Type</option>
-            <option value="iOS">iPhone/iPad</option>
-            <option value="Mac">Mac</option>
-            <option value="Android">Android</option>
-        </select>
+    <div class="device-selector">
+        <div class="device-icon" onclick="selectDevice('iOS')">
+            <img src="iphone-icon.png" alt="iPhone/iPad">
+            <p>iPhone/iPad</p>
+        </div>
+        <div class="device-icon" onclick="selectDevice('Mac')">
+            <img src="mac-icon.png" alt="Mac">
+            <p>Mac</p>
+        </div>
+        <div class="device-icon" onclick="selectDevice('Android')">
+            <img src="android-icon.png" alt="Android">
+            <p>Android</p>
+        </div>
     </div>
 
-    <div class="tab-content" id="deviceChecklistTab">
+    <div class="tab-content" id="deviceChecklistTab" style="display: none;">
         <div class="tabs">
             <div class="tab active" onclick="showTab('checklistTab')">Checklist</div>
             <div class="tab" onclick="showTab('howToTab')">How To's</div>
@@ -197,6 +262,21 @@
                 <label for="howToNotes">Notes</label>
                 <textarea id="howToNotes" rows="3" readonly></textarea>
             </div>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <div class="faq-item" onclick="toggleFAQ(this)">
+            <h3>What can I do if my device isn't connecting to WiFi?</h3>
+            <div class="faq-content">Try resetting your network settings. For iOS, go to Settings > General > Reset > Reset Network Settings. Make sure to re-enter your WiFi password after the reset.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFAQ(this)">
+            <h3>How do I reset my device to factory settings?</h3>
+            <div class="faq-content">For iOS devices, go to Settings > General > Reset > Erase All Content and Settings. Make sure to back up important data before proceeding.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFAQ(this)">
+            <h3>My email isn't syncing, what should I do?</h3>
+            <div class="faq-content">Ensure you have the correct email settings configured. Go to Settings > Accounts > [Your Email] and verify the server information is correct.</div>
         </div>
     </div>
 </div>
@@ -277,15 +357,8 @@
     };
     
     // Function to update content based on selected device type
-    function updateDeviceType() {
-        const deviceType = document.getElementById("deviceType").value;
+    function selectDevice(deviceType) {
         const deviceChecklistTab = document.getElementById("deviceChecklistTab");
-
-        // Hide all content if no device type is selected
-        if (!deviceType) {
-            deviceChecklistTab.style.display = "none";
-            return;
-        }
 
         // Show content for selected device type
         deviceChecklistTab.style.display = "block";
@@ -412,6 +485,11 @@
         document.getElementById("correctiveSteps").value = '';
         document.getElementById("cause").value = '';
         document.getElementById("notes").value = '';
+    }
+
+    // Function to toggle FAQ items
+    function toggleFAQ(element) {
+        element.classList.toggle('active');
     }
 
     // Initialize dropdowns and clear fields on page load
