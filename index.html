@@ -129,62 +129,74 @@
 <div class="container">
     <h1>AirWatch Troubleshooting Dashboard</h1>
 
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('iOSchecklistTab')">iPhone/iPad</div>
-        <div class="tab" onclick="showTab('howToTab')">How To's</div>
+    <div class="form-group">
+        <label for="deviceType">Device Type</label>
+        <select id="deviceType" onchange="updateDeviceType()">
+            <option value="">Select Device Type</option>
+            <option value="iOS">iPhone/iPad</option>
+            <option value="Mac">Mac</option>
+            <option value="Android">Android</option>
+        </select>
     </div>
 
-    <div class="tab-content active" id="iOSchecklistTab">
-        <div class="form-group">
-            <label for="failurePoint">Failure Point</label>
-            <select id="failurePoint" onchange="updateSymptoms()">
-                <option value="">Select Failure Point</option>
-            </select>
+    <div class="tab-content" id="deviceChecklistTab">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('checklistTab')">Checklist</div>
+            <div class="tab" onclick="showTab('howToTab')">How To's</div>
         </div>
 
-        <div class="form-group">
-            <label for="symptom">Symptom</label>
-            <select id="symptom" onchange="populateDetails()">
-                <option value="">Select Symptom</option>
-            </select>
-        </div>
-
-        <div class="text-area-container">
+        <div class="tab-content active" id="checklistTab">
             <div class="form-group">
-                <label for="correctiveSteps">Corrective Steps</label>
-                <textarea id="correctiveSteps" rows="4" readonly></textarea>
+                <label for="failurePoint">Failure Point</label>
+                <select id="failurePoint" onchange="updateSymptoms()">
+                    <option value="">Select Failure Point</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="cause">Cause</label>
-                <textarea id="cause" rows="2" readonly></textarea>
+                <label for="symptom">Symptom</label>
+                <select id="symptom" onchange="populateDetails()">
+                    <option value="">Select Symptom</option>
+                </select>
+            </div>
+
+            <div class="text-area-container">
+                <div class="form-group">
+                    <label for="correctiveSteps">Corrective Steps</label>
+                    <textarea id="correctiveSteps" rows="4" readonly></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="cause">Cause</label>
+                    <textarea id="cause" rows="2" readonly></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="2" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="howToTab">
+            <h2>How To's</h2>
+
+            <div class="form-group">
+                <label for="howToCategory">Category</label>
+                <select id="howToCategory" onchange="updateHowToSteps()">
+                    <option value="">Select Category</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="notes">Notes</label>
-                <textarea id="notes" rows="2" readonly></textarea>
+                <label for="howToSteps">Steps</label>
+                <textarea id="howToSteps" rows="6" readonly></textarea>
             </div>
-        </div>
-    </div>
 
-    <div class="tab-content" id="howToTab">
-        <h2>How To's</h2>
-
-        <div class="form-group">
-            <label for="howToCategory">Category</label>
-            <select id="howToCategory" onchange="updateHowToSteps()">
-                <option value="">Select Category</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="howToSteps">Steps</label>
-            <textarea id="howToSteps" rows="6" readonly></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="howToNotes">Notes</label>
-            <textarea id="howToNotes" rows="3" readonly></textarea>
+            <div class="form-group">
+                <label for="howToNotes">Notes</label>
+                <textarea id="howToNotes" rows="3" readonly></textarea>
+            </div>
         </div>
     </div>
 </div>
@@ -192,44 +204,97 @@
 <script>
     // Data structure holding troubleshooting information
     let troubleshootingData = {
-        "Re-enter Password": {
-            "Prompt to enter username is not given": {
-                "Cause": "Wrong username was entered",
-                "CorrectiveSteps": "Clear Safari 'History and Website Data' > Settings > Safari",
-                "Notes": "If the wrong username is entered and 'Remember this setting' is checked, prompt will not be given again."
+        iOS: {
+            "Re-enter Password": {
+                "Prompt to enter username is not given": {
+                    "Cause": "Wrong username was entered",
+                    "CorrectiveSteps": "Clear Safari 'History and Website Data' > Settings > Safari",
+                    "Notes": "If the wrong username is entered and 'Remember this setting' is checked, prompt will not be given again."
+                },
+                "Error 'Enter message' is given after entering username": {
+                    "Cause": "Request Desktop Website is turned On",
+                    "CorrectiveSteps": "Turn 'All Websites' Off > Settings > Safari > Request Desktop Website",
+                    "Notes": "For iPads, some iOS versions have this setting turned on by default. Must be turned off to access MyPaylinks."
+                },
+                "Microsoft Authenticator installed": {
+                    "Cause": "Microsoft Authenticator is installed",
+                    "CorrectiveSteps": "Airwatch console App tab, have user uninstall Authenticator that is not 'Managed'",
+                    "Notes": "App can be re-installed after password is updated."
+                }
             },
-            "Error 'Enter message' is given after entering username": {
-                "Cause": "Request Desktop Website is turned On",
-                "CorrectiveSteps": "Turn 'All Websites' Off > Settings > Safari > Request Desktop Website",
-                "Notes": "For iPads, some iOS versions have this setting turned on by default. Must be turned off to access MyPaylinks."
-            },
-            "Microsoft Authenticator installed": {
-                "Cause": "Microsoft Authenticator is installed",
-                "CorrectiveSteps": "Airwatch console App tab, have user uninstall Authenticator that is not 'Managed'",
-                "Notes": "App can be re-installed after password is updated."
+            "Email not Syncing": {
+                "No new emails, Unable to connect to WiFi, Other apps may lose internet access": {
+                    "Cause": "Device record in AW Console needs to be deleted for use by another user",
+                    "CorrectiveSteps": "Reset Network Settings > Settings > General > Transfer or Reset iPhone > Reset > Reset Network Settings > Enter passcode > Reset Network Settings",
+                    "Notes": "This problem is a result of a device switch."
+                }
             }
         },
-        "Email not Syncing": {
-            "No new emails, Unable to connect to WiFi, Other apps may lose internet access": {
-                "Cause": "Device record in AW Console needs to be deleted for use by another user",
-                "CorrectiveSteps": "Reset Network Settings > Settings > General > Transfer or Reset iPhone > Reset > Reset Network Settings > Enter passcode > Reset Network Settings",
-                "Notes": "This problem is a result of a device switch."
+        Mac: {
+            "WiFi Issues": {
+                "Cannot connect to WiFi": {
+                    "Cause": "Incorrect network settings",
+                    "CorrectiveSteps": "Go to System Preferences > Network > WiFi > Advanced, and remove the problematic network. Then reconnect.",
+                    "Notes": "Make sure to verify the WiFi password is correct."
+                }
+            }
+        },
+        Android: {
+            "App Crashing": {
+                "App crashes on launch": {
+                    "Cause": "Corrupted app data",
+                    "CorrectiveSteps": "Go to Settings > Apps > [App Name] > Storage > Clear Data and Clear Cache. Restart the app.",
+                    "Notes": "Ensure the app is updated to the latest version."
+                }
             }
         }
     };
     
     // Data structure holding How To information
     let howToData = {
-        "Reset Device": {
-            Steps: "1. Go to Settings > General.\n2. Tap Reset.\n3. Choose 'Erase All Content and Settings'.\n4. Enter your passcode and confirm.",
-            Notes: "This will erase all data. Make sure to back up important information."
+        iOS: {
+            "Reset Device": {
+                Steps: "1. Go to Settings > General.\n2. Tap Reset.\n3. Choose 'Erase All Content and Settings'.\n4. Enter your passcode and confirm.",
+                Notes: "This will erase all data. Make sure to back up important information."
+            },
+            "Setup Email Account": {
+                Steps: "1. Open the Mail app.\n2. Enter your email address and password.\n3. Follow the prompts to complete setup.",
+                Notes: "For corporate email, use the provided server settings."
+            }
         },
-        "Setup Email Account": {
-            Steps: "1. Open the Mail app.\n2. Enter your email address and password.\n3. Follow the prompts to complete setup.",
-            Notes: "For corporate email, use the provided server settings."
+        Mac: {
+            "Set Up WiFi": {
+                Steps: "1. Click on the WiFi icon in the menu bar.\n2. Select the desired network.\n3. Enter the WiFi password.",
+                Notes: "Ensure the WiFi network is secure."
+            }
+        },
+        Android: {
+            "Clear Cache": {
+                Steps: "1. Go to Settings > Apps.\n2. Select the app.\n3. Tap on Storage > Clear Cache.",
+                Notes: "Clearing cache can resolve many app issues."
+            }
         }
     };
     
+    // Function to update content based on selected device type
+    function updateDeviceType() {
+        const deviceType = document.getElementById("deviceType").value;
+        const deviceChecklistTab = document.getElementById("deviceChecklistTab");
+
+        // Hide all content if no device type is selected
+        if (!deviceType) {
+            deviceChecklistTab.style.display = "none";
+            return;
+        }
+
+        // Show content for selected device type
+        deviceChecklistTab.style.display = "block";
+
+        // Populate failure points and How To categories based on the selected device type
+        populateFailurePoints(deviceType);
+        populateHowToCategories(deviceType);
+    }
+
     // Function to show the active tab
     function showTab(tabId) {
         const tabs = document.querySelectorAll(".tab");
@@ -243,16 +308,16 @@
         document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
         document.getElementById(tabId).classList.add("active");
     }
-    
+
     // Function to populate the "How To's" dropdown
-    function populateHowToCategories() {
+    function populateHowToCategories(deviceType) {
         const howToCategorySelect = document.getElementById("howToCategory");
     
         // Clear current options
         howToCategorySelect.innerHTML = '<option value="">Select Category</option>';
     
-        // Populate categories
-        for (const category in howToData) {
+        // Populate categories for the selected device type
+        for (const category in howToData[deviceType]) {
             const option = document.createElement("option");
             option.value = category;
             option.textContent = category;
@@ -261,6 +326,7 @@
     }
     
     function updateHowToSteps() {
+        const deviceType = document.getElementById("deviceType").value;
         const howToCategory = document.getElementById("howToCategory").value;
         const howToSteps = document.getElementById("howToSteps");
         const howToNotes = document.getElementById("howToNotes");
@@ -270,30 +336,31 @@
         howToNotes.value = '';
     
         // Populate fields if a valid category is selected
-        if (howToCategory && howToData[howToCategory]) {
-            howToSteps.value = howToData[howToCategory].Steps;
-            howToNotes.value = howToData[howToCategory].Notes;
+        if (deviceType && howToCategory && howToData[deviceType][howToCategory]) {
+            howToSteps.value = howToData[deviceType][howToCategory].Steps;
+            howToNotes.value = howToData[deviceType][howToCategory].Notes;
         }
     }
     
     // Function to populate failure points dropdown
-    function populateFailurePoints() {
+    function populateFailurePoints(deviceType) {
         const failurePointSelect = document.getElementById("failurePoint");
     
         // Clear current options
         failurePointSelect.innerHTML = '<option value="">Select Failure Point</option>';
     
-        // Populate failure point dropdowns
-        for (const failurePoint in troubleshootingData) {
-            const option1 = document.createElement("option");
-            option1.value = failurePoint;
-            option1.textContent = failurePoint;
-            failurePointSelect.appendChild(option1);
+        // Populate failure points for the selected device type
+        for (const failurePoint in troubleshootingData[deviceType]) {
+            const option = document.createElement("option");
+            option.value = failurePoint;
+            option.textContent = failurePoint;
+            failurePointSelect.appendChild(option);
         }
     }
     
     // Function to update symptoms based on selected failure point
     function updateSymptoms() {
+        const deviceType = document.getElementById("deviceType").value;
         const failurePointSelect = document.getElementById("failurePoint");
         const symptomSelect = document.getElementById("symptom");
     
@@ -304,8 +371,8 @@
         clearFields();
     
         // Populate symptoms if a valid failure point is selected
-        if (failurePoint && troubleshootingData[failurePoint]) {
-            for (const symptom in troubleshootingData[failurePoint]) {
+        if (deviceType && failurePoint && troubleshootingData[deviceType][failurePoint]) {
+            for (const symptom in troubleshootingData[deviceType][failurePoint]) {
                 const option = document.createElement("option");
                 option.value = symptom;
                 option.textContent = symptom;
@@ -316,6 +383,7 @@
     
     // Function to populate symptom details based on selection
     function populateDetails() {
+        const deviceType = document.getElementById("deviceType").value;
         const failurePointSelect = document.getElementById("failurePoint");
         const symptomSelect = document.getElementById("symptom");
     
@@ -327,13 +395,13 @@
         const notes = document.getElementById("notes");
     
         // Clear the form if no failure point or symptom is selected
-        if (!failurePoint || !symptom || !troubleshootingData[failurePoint] || !troubleshootingData[failurePoint][symptom]) {
+        if (!deviceType || !failurePoint || !symptom || !troubleshootingData[deviceType][failurePoint] || !troubleshootingData[deviceType][failurePoint][symptom]) {
             clearFields();
             return;
         }
     
         // Populate form details based on the selected symptom
-        const details = troubleshootingData[failurePoint][symptom];
+        const details = troubleshootingData[deviceType][failurePoint][symptom];
         correctiveSteps.value = details.CorrectiveSteps;
         cause.value = details.Cause;
         notes.value = details.Notes;
@@ -348,8 +416,6 @@
 
     // Initialize dropdowns and clear fields on page load
     window.onload = function() {
-        populateFailurePoints();
-        populateHowToCategories(); // Initializes the "How To's" dropdown
         clearFields();
     };
 </script>
