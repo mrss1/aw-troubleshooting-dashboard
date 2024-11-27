@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troubleshooting Checklist</title>
+<style>
+    /* General styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1 {
+        text-align: center;
+        color: #4A90E2;
+    }
+
+    .container {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #f4f4f9;
+        border: 1px solid #ddd;
+        border-radius: 5px 5px 0 0;
+        margin-right: 5px;
+        transition: .25s linear;
+    }
+
+    .tab:hover {
+        background-color: #4a91e26b;
+    }
+
+    .tab.active {
+        color: #ffffff;
+        background-color: #4A90E2;
+        border-bottom: 2px solid white;
+        border: 1px solid #4A90E2;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        font-weight: bold;
+        color: #4A90E2;
+    }
+
+    select, textarea, input {
+        width: calc(100% - 2px);
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 5px;
+        font-size: 16px;
+    }
+
+    select {
+        cursor: pointer;
+    }
+
+    textarea {
+        resize: none;
+        background-color: #f9f9f9;
+    }
+
+    .text-area-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    textarea[readonly] {
+        background-color: #f0f8ff;
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        color: #333;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 15px 20px;
+        background-color: #f4f4f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: .25s linear;
+    }
+
+    button:hover {
+        color: #ffffff;
+        background-color: #4A90E2;
+        box-shadow: 1px 0 1 0 rgba(0, 0, 0, 0.171);
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>AirWatch Troubleshooting Dashboard</h1>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('iOSchecklistTab')">iPhone/iPad</div>
+        <div class="tab" onclick="showTab('howToTab')">How To's</div>
+    </div>
+
+    <div class="tab-content active" id="iOSchecklistTab">
+        <div class="form-group">
+            <label for="failurePoint">Failure Point</label>
+            <select id="failurePoint" onchange="updateSymptoms()">
+                <option value="">Select Failure Point</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="symptom">Symptom</label>
+            <select id="symptom" onchange="populateDetails()">
+                <option value="">Select Symptom</option>
+            </select>
+        </div>
+
+        <div class="text-area-container">
+            <div class="form-group">
+                <label for="correctiveSteps">Corrective Steps</label>
+                <textarea id="correctiveSteps" rows="4" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="cause">Cause</label>
+                <textarea id="cause" rows="2" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" rows="2" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="howToTab">
+        <h2>How To's</h2>
+
+        <div class="form-group">
+            <label for="howToCategory">Category</label>
+            <select id="howToCategory" onchange="updateHowToSteps()">
+                <option value="">Select Category</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="howToSteps">Steps</label>
+            <textarea id="howToSteps" rows="6" readonly></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="howToNotes">Notes</label>
+            <textarea id="howToNotes" rows="3" readonly></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data structure holding troubleshooting information
+    let troubleshootingData = {
+        "Re-enter Password": {
+            "Prompt to enter username is not given": {
+                "Cause": "Wrong username was entered",
+                "CorrectiveSteps": "Clear Safari 'History and Website Data' > Settings > Safari",
+                "Notes": "If the wrong username is entered and 'Remember this setting' is checked, prompt will not be given again."
+            },
+            "Error 'Enter message' is given after entering username": {
+                "Cause": "Request Desktop Website is turned On",
+                "CorrectiveSteps": "Turn 'All Websites' Off > Settings > Safari > Request Desktop Website",
+                "Notes": "For iPads, some iOS versions have this setting turned on by default. Must be turned off to access MyPaylinks."
+            },
+            "Microsoft Authenticator installed": {
+                "Cause": "Microsoft Authenticator is installed",
+                "CorrectiveSteps": "Airwatch console App tab, have user uninstall Authenticator that is not 'Managed'",
+                "Notes": "App can be re-installed after password is updated."
+            }
+        },
+        "Email not Syncing": {
+            "No new emails, Unable to connect to WiFi, Other apps may lose internet access": {
+                "Cause": "Device record in AW Console needs to be deleted for use by another user",
+                "CorrectiveSteps": "Reset Network Settings > Settings > General > Transfer or Reset iPhone > Reset > Reset Network Settings > Enter passcode > Reset Network Settings",
+                "Notes": "This problem is a result of a device switch."
+            }
+        }
+    };
+    
+    // Data structure holding How To information
+    let howToData = {
+        "Reset Device": {
+            Steps: "1. Go to Settings > General.\n2. Tap Reset.\n3. Choose 'Erase All Content and Settings'.\n4. Enter your passcode and confirm.",
+            Notes: "This will erase all data. Make sure to back up important information."
+        },
+        "Setup Email Account": {
+            Steps: "1. Open the Mail app.\n2. Enter your email address and password.\n3. Follow the prompts to complete setup.",
+            Notes: "For corporate email, use the provided server settings."
+        }
+    };
+    
+    // Function to show the active tab
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll(".tab");
+        const contents = document.querySelectorAll(".tab-content");
+    
+        // Remove active class from all tabs and hide all content
+        tabs.forEach(tab => tab.classList.remove("active"));
+        contents.forEach(content => content.classList.remove("active"));
+    
+        // Add active class to the selected tab and show the content
+        document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+    }
+    
+    // Function to populate the "How To's" dropdown
+    function populateHowToCategories() {
+        const howToCategorySelect = document.getElementById("howToCategory");
+    
+        // Clear current options
+        howToCategorySelect.innerHTML = '<option value="">Select Category</option>';
+    
+        // Populate categories
+        for (const category in howToData) {
+            const option = document.createElement("option");
+            option.value = category;
+            option.textContent = category;
+            howToCategorySelect.appendChild(option);
+        }
+    }
+    
+    function updateHowToSteps() {
+        const howToCategory = document.getElementById("howToCategory").value;
+        const howToSteps = document.getElementById("howToSteps");
+        const howToNotes = document.getElementById("howToNotes");
+    
+        // Clear fields
+        howToSteps.value = '';
+        howToNotes.value = '';
+    
+        // Populate fields if a valid category is selected
+        if (howToCategory && howToData[howToCategory]) {
+            howToSteps.value = howToData[howToCategory].Steps;
+            howToNotes.value = howToData[howToCategory].Notes;
+        }
+    }
+    
+    // Function to populate failure points dropdown
+    function populateFailurePoints() {
+        const failurePointSelect = document.getElementById("failurePoint");
+    
+        // Clear current options
+        failurePointSelect.innerHTML = '<option value="">Select Failure Point</option>';
+    
+        // Populate failure point dropdowns
+        for (const failurePoint in troubleshootingData) {
+            const option1 = document.createElement("option");
+            option1.value = failurePoint;
+            option1.textContent = failurePoint;
+            failurePointSelect.appendChild(option1);
+        }
+    }
+    
+    // Function to update symptoms based on selected failure point
+    function updateSymptoms() {
+        const failurePointSelect = document.getElementById("failurePoint");
+        const symptomSelect = document.getElementById("symptom");
+    
+        const failurePoint = failurePointSelect.value;
+    
+        // Clear symptoms dropdown and form details
+        symptomSelect.innerHTML = '<option value="">Select Symptom</option>';
+        clearFields();
+    
+        // Populate symptoms if a valid failure point is selected
+        if (failurePoint && troubleshootingData[failurePoint]) {
+            for (const symptom in troubleshootingData[failurePoint]) {
+                const option = document.createElement("option");
+                option.value = symptom;
+                option.textContent = symptom;
+                symptomSelect.appendChild(option);
+            }
+        }
+    }
+    
+    // Function to populate symptom details based on selection
+    function populateDetails() {
+        const failurePointSelect = document.getElementById("failurePoint");
+        const symptomSelect = document.getElementById("symptom");
+    
+        const failurePoint = failurePointSelect.value;
+        const symptom = symptomSelect.value;
+    
+        const correctiveSteps = document.getElementById("correctiveSteps");
+        const cause = document.getElementById("cause");
+        const notes = document.getElementById("notes");
+    
+        // Clear the form if no failure point or symptom is selected
+        if (!failurePoint || !symptom || !troubleshootingData[failurePoint] || !troubleshootingData[failurePoint][symptom]) {
+            clearFields();
+            return;
+        }
+    
+        // Populate form details based on the selected symptom
+        const details = troubleshootingData[failurePoint][symptom];
+        correctiveSteps.value = details.CorrectiveSteps;
+        cause.value = details.Cause;
+        notes.value = details.Notes;
+    }
+    
+    // Function to clear all fields
+    function clearFields() {
+        document.getElementById("correctiveSteps").value = '';
+        document.getElementById("cause").value = '';
+        document.getElementById("notes").value = '';
+    }
+
+    // Initialize dropdowns and clear fields on page load
+    window.onload = function() {
+        populateFailurePoints();
+        populateHowToCategories(); // Initializes the "How To's" dropdown
+        clearFields();
+    };
+</script>
+
+</body>
+</html>
