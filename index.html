@@ -313,6 +313,9 @@
         // Clear all dropdowns and fields
         clearAllDropdownsAndFields();
 
+        // Force clear symptom dropdown and reset its value
+        document.getElementById("symptom").value = ""; // Reset symptom dropdown
+
         // Populate failure points and How To categories based on the selected device type
         populateFailurePoints(deviceType);
         populateHowToCategories(deviceType);
