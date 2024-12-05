@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Troubleshooting Checklist</title>
+    <title>AirWatch Troubleshooting Dashboard</title>
     <style>
       :root {
         --theme-color: #4a90e2;
@@ -207,7 +207,12 @@
           </div>
         </div>
       </div>
+      <!-- Button to export data -->
+      <button onclick="exportAllData()">Export All Data to Excel</button>
     </div>
+
+    <!-- Include SheetJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
     <script>
       // Data structure holding troubleshooting information
@@ -533,5 +538,7 @@
         document.getElementById("deviceChecklistTab").style.display = "none";
       };
     </script>
+    <!-- Include the exportData.js file -->
+    <script src="exportData.js"></script>
   </body>
 </html>
