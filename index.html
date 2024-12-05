@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Troubleshooting Checklist</title>
     <style>
+      :root {
+        --theme-color: #4a90e2;
+        --theme-hover-color: #4a91e26b;
+      }
+
       /* General styling */
       body {
         font-family: Arial, sans-serif;
@@ -20,7 +25,7 @@
 
       h1 {
         text-align: center;
-        color: #4a90e2;
+        color: var(--theme-color);
       }
 
       .container {
@@ -49,14 +54,14 @@
       }
 
       .tab:hover {
-        background-color: #4a91e26b;
+        background-color: var(--theme-hover-color);
       }
 
       .tab.active {
         color: #ffffff;
-        background-color: #4a90e2;
+        background-color: var(--theme-color);
         border-bottom: 2px solid white;
-        border: 1px solid #4a90e2;
+        border: 1px solid var(--theme-color);
       }
 
       .tab-content {
@@ -73,7 +78,7 @@
 
       label {
         font-weight: bold;
-        color: #4a90e2;
+        color: var(--theme-color);
       }
 
       select,
@@ -121,7 +126,7 @@
 
       button:hover {
         color: #ffffff;
-        background-color: #4a90e2;
+        background-color: var(--theme-color);
         box-shadow: 1px 0 1 0 rgba(0, 0, 0, 0.171);
       }
     </style>
@@ -304,6 +309,15 @@
         if (!deviceType) {
           deviceChecklistTab.style.display = "none";
           clearAllDropdownsAndFields();
+          // Reset theme colors to default
+          document.documentElement.style.setProperty(
+            "--theme-color",
+            "#4a90e2"
+          );
+          document.documentElement.style.setProperty(
+            "--theme-hover-color",
+            "#4a91e26b"
+          );
           return;
         }
 
@@ -316,9 +330,45 @@
         // Force clear symptom dropdown and reset its value
         document.getElementById("symptom").value = ""; // Reset symptom dropdown
 
+        // Set default tab to Checklist
+        showTab("checklistTab");
+
         // Populate failure points and How To categories based on the selected device type
         populateFailurePoints(deviceType);
         populateHowToCategories(deviceType);
+
+        // Change colors based on the device type
+        if (deviceType === "Mac") {
+          // Change to purple for Mac
+          document.documentElement.style.setProperty(
+            "--theme-color",
+            "#800080"
+          );
+          document.documentElement.style.setProperty(
+            "--theme-hover-color",
+            "#8000806b"
+          );
+        } else if (deviceType === "Android") {
+          // Change to green for Android
+          document.documentElement.style.setProperty(
+            "--theme-color",
+            "#008000"
+          );
+          document.documentElement.style.setProperty(
+            "--theme-hover-color",
+            "#0080006b"
+          );
+        } else {
+          // Default for iOS
+          document.documentElement.style.setProperty(
+            "--theme-color",
+            "#4a90e2"
+          );
+          document.documentElement.style.setProperty(
+            "--theme-hover-color",
+            "#4a91e26b"
+          );
+        }
       }
 
       // Function to clear all dropdowns and fields
