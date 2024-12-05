@@ -32,6 +32,41 @@
         max-width: 600px;
       }
 
+      .device-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+      }
+
+      .device-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #f4f4f9;
+        border: 1px solid #ddd;
+        border-radius: 5px 5px 0 0;
+        margin-right: 5px;
+        transition: 0.25s linear;
+      }
+
+      .device-tab:hover {
+        background-color: #4a91e26b;
+      }
+
+      .device-tab.active {
+        color: #ffffff;
+        background-color: #4a90e2;
+        border-bottom: 2px solid white;
+        border: 1px solid #4a90e2;
+      }
+
+      .device-content {
+        display: none;
+      }
+
+      .device-content.active {
+        display: block;
+      }
+
       .tabs {
         display: flex;
         margin-bottom: 20px;
@@ -110,55 +145,41 @@
         padding: 10px;
         box-sizing: border-box;
       }
-
-      button {
-        padding: 15px 20px;
-        background-color: #f4f4f9;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        transition: 0.25s linear;
-      }
-
-      button:hover {
-        color: #ffffff;
-        background-color: #4a90e2;
-        box-shadow: 1px 0 1 0 rgba(0, 0, 0, 0.171);
-      }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>AirWatch Troubleshooting Dashboard</h1>
 
-      <div class="form-group">
-        <label for="deviceType">Device Type</label>
-        <select id="deviceType" onchange="updateDeviceType()">
-          <option value="">Select Device Type</option>
-          <option value="iOS">iPhone/iPad</option>
-          <option value="Mac">Mac</option>
-          <option value="Android">Android</option>
-        </select>
+      <div class="device-tabs">
+        <div class="device-tab active" onclick="showDeviceTab('iOS')">
+          iPhone/iPad
+        </div>
+        <div class="device-tab" onclick="showDeviceTab('Mac')">Mac</div>
+        <div class="device-tab" onclick="showDeviceTab('Android')">Android</div>
       </div>
 
-      <div class="tab-content" id="deviceChecklistTab">
+      <div id="iOS" class="device-content active">
         <div class="tabs">
-          <div class="tab active" onclick="showTab('checklistTab')">
+          <div class="tab active" onclick="showTab('iOS-checklistTab')">
             Checklist
           </div>
-          <div class="tab" onclick="showTab('howToTab')">How To's</div>
+          <div class="tab" onclick="showTab('iOS-howToTab')">How To's</div>
         </div>
 
-        <div class="tab-content active" id="checklistTab">
+        <div id="iOS-checklistTab" class="tab-content active">
           <div class="form-group">
             <label for="failurePoint">Failure Point</label>
-            <select id="failurePoint" onchange="updateSymptoms()">
+            <select id="failurePoint" onchange="updateSymptoms('iOS')">
               <option value="">Select Failure Point</option>
+              <option value="Re-enter Password">Re-enter Password</option>
+              <option value="Email not Syncing">Email not Syncing</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="symptom">Symptom</label>
-            <select id="symptom" onchange="populateDetails()">
+            <select id="symptom" onchange="populateDetails('iOS')">
               <option value="">Select Symptom</option>
             </select>
           </div>
@@ -181,13 +202,14 @@
           </div>
         </div>
 
-        <div class="tab-content" id="howToTab">
+        <div id="iOS-howToTab" class="tab-content">
           <h2>How To's</h2>
-
           <div class="form-group">
             <label for="howToCategory">Category</label>
-            <select id="howToCategory" onchange="updateHowToSteps()">
+            <select id="howToCategory" onchange="updateHowToSteps('iOS')">
               <option value="">Select Category</option>
+              <option value="Reset Device">Reset Device</option>
+              <option value="Setup Email Account">Setup Email Account</option>
             </select>
           </div>
 
@@ -199,6 +221,144 @@
           <div class="form-group">
             <label for="howToNotes">Notes</label>
             <textarea id="howToNotes" rows="3" readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div id="Mac" class="device-content">
+        <div class="tabs">
+          <div class="tab active" onclick="showTab('Mac-checklistTab')">
+            Checklist
+          </div>
+          <div class="tab" onclick="showTab('Mac-howToTab')">How To's</div>
+        </div>
+
+        <div id="Mac-checklistTab" class="tab-content active">
+          <div class="form-group">
+            <label for="failurePointMac">Failure Point</label>
+            <select id="failurePointMac" onchange="updateSymptoms('Mac')">
+              <option value="">Select Failure Point</option>
+              <option value="WiFi Issues">WiFi Issues</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="symptomMac">Symptom</label>
+            <select id="symptomMac" onchange="populateDetails('Mac')">
+              <option value="">Select Symptom</option>
+            </select>
+          </div>
+
+          <div class="text-area-container">
+            <div class="form-group">
+              <label for="correctiveStepsMac">Corrective Steps</label>
+              <textarea id="correctiveStepsMac" rows="4" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="causeMac">Cause</label>
+              <textarea id="causeMac" rows="2" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="notesMac">Notes</label>
+              <textarea id="notesMac" rows="2" readonly></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div id="Mac-howToTab" class="tab-content">
+          <h2>How To's</h2>
+          <div class="form-group">
+            <label for="howToCategoryMac">Category</label>
+            <select id="howToCategoryMac" onchange="updateHowToSteps('Mac')">
+              <option value="">Select Category</option>
+              <option value="Set Up WiFi">Set Up WiFi</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="howToStepsMac">Steps</label>
+            <textarea id="howToStepsMac" rows="6" readonly></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="howToNotesMac">Notes</label>
+            <textarea id="howToNotesMac" rows="3" readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div id="Android" class="device-content">
+        <div class="tabs">
+          <div class="tab active" onclick="showTab('Android-checklistTab')">
+            Checklist
+          </div>
+          <div class="tab" onclick="showTab('Android-howToTab')">How To's</div>
+        </div>
+
+        <div id="Android-checklistTab" class="tab-content active">
+          <div class="form-group">
+            <label for="failurePointAndroid">Failure Point</label>
+            <select
+              id="failurePointAndroid"
+              onchange="updateSymptoms('Android')"
+            >
+              <option value="">Select Failure Point</option>
+              <option value="App Crashing">App Crashing</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="symptomAndroid">Symptom</label>
+            <select id="symptomAndroid" onchange="populateDetails('Android')">
+              <option value="">Select Symptom</option>
+            </select>
+          </div>
+
+          <div class="text-area-container">
+            <div class="form-group">
+              <label for="correctiveStepsAndroid">Corrective Steps</label>
+              <textarea
+                id="correctiveStepsAndroid"
+                rows="4"
+                readonly
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="causeAndroid">Cause</label>
+              <textarea id="causeAndroid" rows="2" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="notesAndroid">Notes</label>
+              <textarea id="notesAndroid" rows="2" readonly></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div id="Android-howToTab" class="tab-content">
+          <h2>How To's</h2>
+          <div class="form-group">
+            <label for="howToCategoryAndroid">Category</label>
+            <select
+              id="howToCategoryAndroid"
+              onchange="updateHowToSteps('Android')"
+            >
+              <option value="">Select Category</option>
+              <option value="Clear Cache">Clear Cache</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="howToStepsAndroid">Steps</label>
+            <textarea id="howToStepsAndroid" rows="6" readonly></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="howToNotesAndroid">Notes</label>
+            <textarea id="howToNotesAndroid" rows="3" readonly></textarea>
           </div>
         </div>
       </div>
@@ -294,140 +454,22 @@
         },
       };
 
-      // Function to update content based on selected device type
-      function updateDeviceType() {
-        const deviceType = document.getElementById("deviceType").value;
-        const deviceChecklistTab =
-          document.getElementById("deviceChecklistTab");
-
-        // Hide all content if no device type is selected
-        if (!deviceType) {
-          deviceChecklistTab.style.display = "none";
-          clearAllDropdownsAndFields();
-          return;
-        }
-
-        // Show content for selected device type
-        deviceChecklistTab.style.display = "block";
-
-        // Clear all dropdowns and fields
-        clearAllDropdownsAndFields();
-
-        // Force clear symptom dropdown and reset its value
-        document.getElementById("symptom").value = ""; // Reset symptom dropdown
-
-        // Populate failure points and How To categories based on the selected device type
-        populateFailurePoints(deviceType);
-        populateHowToCategories(deviceType);
-      }
-
-      // Function to clear all dropdowns and fields
-      function clearAllDropdownsAndFields() {
-        // Reset dropdowns
-        document.getElementById("failurePoint").innerHTML =
-          '<option value="">Select Failure Point</option>';
-        document.getElementById("symptom").innerHTML =
-          '<option value="">Select Symptom</option>';
-        document.getElementById("howToCategory").innerHTML =
-          '<option value="">Select Category</option>';
-
-        // Clear all form fields
-        clearFields();
-
-        // Clear How To fields
-        document.getElementById("howToSteps").value = "";
-        document.getElementById("howToNotes").value = "";
-      }
-
-      // Function to show the active tab
-      function showTab(tabId) {
-        const tabs = document.querySelectorAll(".tab");
-        const contents = document.querySelectorAll(".tab-content");
-
-        // Remove active class from all tabs and hide all content
-        tabs.forEach((tab) => tab.classList.remove("active"));
-        contents.forEach((content) => content.classList.remove("active"));
-
-        // Add active class to the selected tab and show the content
-        document
-          .querySelector(`[onclick="showTab('${tabId}')"]`)
-          .classList.add("active");
-        document.getElementById(tabId).classList.add("active");
-      }
-
-      // Function to populate the "How To's" dropdown
-      function populateHowToCategories(deviceType) {
-        const howToCategorySelect = document.getElementById("howToCategory");
-
-        // Clear current options
-        howToCategorySelect.innerHTML =
-          '<option value="">Select Category</option>';
-
-        // Populate categories for the selected device type
-        for (const category in howToData[deviceType]) {
-          const option = document.createElement("option");
-          option.value = category;
-          option.textContent = category;
-          howToCategorySelect.appendChild(option);
-        }
-      }
-
-      function updateHowToSteps() {
-        const deviceType = document.getElementById("deviceType").value;
-        const howToCategory = document.getElementById("howToCategory").value;
-        const howToSteps = document.getElementById("howToSteps");
-        const howToNotes = document.getElementById("howToNotes");
-
-        // Clear fields
-        howToSteps.value = "";
-        howToNotes.value = "";
-
-        // Populate fields if a valid category is selected
-        if (
-          deviceType &&
-          howToCategory &&
-          howToData[deviceType][howToCategory]
-        ) {
-          howToSteps.value = howToData[deviceType][howToCategory].Steps;
-          howToNotes.value = howToData[deviceType][howToCategory].Notes;
-        }
-      }
-
-      // Function to populate failure points dropdown
-      function populateFailurePoints(deviceType) {
-        const failurePointSelect = document.getElementById("failurePoint");
-
-        // Clear current options
-        failurePointSelect.innerHTML =
-          '<option value="">Select Failure Point</option>';
-
-        // Populate failure points for the selected device type
-        for (const failurePoint in troubleshootingData[deviceType]) {
-          const option = document.createElement("option");
-          option.value = failurePoint;
-          option.textContent = failurePoint;
-          failurePointSelect.appendChild(option);
-        }
-      }
-
-      // Function to update symptoms based on selected failure point
-      function updateSymptoms() {
-        const deviceType = document.getElementById("deviceType").value;
-        const failurePointSelect = document.getElementById("failurePoint");
-        const symptomSelect = document.getElementById("symptom");
-
+      // Function to update symptoms dropdown based on selected failure point
+      function updateSymptoms(deviceType) {
+        const failurePointSelect = document.getElementById(
+          `failurePoint${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const symptomSelect = document.getElementById(
+          `symptom${deviceType === "iOS" ? "" : deviceType}`
+        );
         const failurePoint = failurePointSelect.value;
 
         // Clear symptoms dropdown and form details
         symptomSelect.innerHTML = '<option value="">Select Symptom</option>';
-        clearFields();
+        clearFields(deviceType);
 
         // Populate symptoms if a valid failure point is selected
-        if (
-          deviceType &&
-          failurePoint &&
-          troubleshootingData[deviceType][failurePoint]
-        ) {
+        if (failurePoint && troubleshootingData[deviceType][failurePoint]) {
           for (const symptom in troubleshootingData[deviceType][failurePoint]) {
             const option = document.createElement("option");
             option.value = symptom;
@@ -438,27 +480,34 @@
       }
 
       // Function to populate symptom details based on selection
-      function populateDetails() {
-        const deviceType = document.getElementById("deviceType").value;
-        const failurePointSelect = document.getElementById("failurePoint");
-        const symptomSelect = document.getElementById("symptom");
+      function populateDetails(deviceType) {
+        const failurePointSelect = document.getElementById(
+          `failurePoint${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const symptomSelect = document.getElementById(
+          `symptom${deviceType === "iOS" ? "" : deviceType}`
+        );
 
         const failurePoint = failurePointSelect.value;
         const symptom = symptomSelect.value;
 
-        const correctiveSteps = document.getElementById("correctiveSteps");
-        const cause = document.getElementById("cause");
-        const notes = document.getElementById("notes");
+        const correctiveSteps = document.getElementById(
+          `correctiveSteps${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const cause = document.getElementById(
+          `cause${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const notes = document.getElementById(
+          `notes${deviceType === "iOS" ? "" : deviceType}`
+        );
 
         // Clear the form if no failure point or symptom is selected
         if (
-          !deviceType ||
           !failurePoint ||
           !symptom ||
-          !troubleshootingData[deviceType][failurePoint] ||
           !troubleshootingData[deviceType][failurePoint][symptom]
         ) {
-          clearFields();
+          clearFields(deviceType);
           return;
         }
 
@@ -470,17 +519,79 @@
       }
 
       // Function to clear all fields
-      function clearFields() {
-        document.getElementById("correctiveSteps").value = "";
-        document.getElementById("cause").value = "";
-        document.getElementById("notes").value = "";
+      function clearFields(deviceType) {
+        document.getElementById(
+          `correctiveSteps${deviceType === "iOS" ? "" : deviceType}`
+        ).value = "";
+        document.getElementById(
+          `cause${deviceType === "iOS" ? "" : deviceType}`
+        ).value = "";
+        document.getElementById(
+          `notes${deviceType === "iOS" ? "" : deviceType}`
+        ).value = "";
       }
 
-      // Initialize dropdowns and clear fields on page load
+      // Function to populate the "How To's" dropdown
+      function updateHowToSteps(deviceType) {
+        const howToCategorySelect = document.getElementById(
+          `howToCategory${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const howToSteps = document.getElementById(
+          `howToSteps${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const howToNotes = document.getElementById(
+          `howToNotes${deviceType === "iOS" ? "" : deviceType}`
+        );
+        const howToCategory = howToCategorySelect.value;
+
+        // Clear fields
+        howToSteps.value = "";
+        howToNotes.value = "";
+
+        // Populate fields if a valid category is selected
+        if (howToCategory && howToData[deviceType][howToCategory]) {
+          howToSteps.value = howToData[deviceType][howToCategory].Steps;
+          howToNotes.value = howToData[deviceType][howToCategory].Notes;
+        }
+      }
+
+      // Function to show the active device tab
+      function showDeviceTab(deviceId) {
+        const deviceTabs = document.querySelectorAll(".device-tab");
+        const deviceContents = document.querySelectorAll(".device-content");
+
+        // Remove active class from all device tabs and hide all device content
+        deviceTabs.forEach((tab) => tab.classList.remove("active"));
+        deviceContents.forEach((content) => content.classList.remove("active"));
+
+        // Add active class to the selected device tab and show the content
+        document
+          .querySelector(`.device-tab[onclick="showDeviceTab('${deviceId}')"]`)
+          .classList.add("active");
+        document.getElementById(deviceId).classList.add("active");
+      }
+
+      // Function to show the active tab within each device
+      function showTab(tabId) {
+        const tabGroup = tabId.split("-")[0];
+        const tabs = document.querySelectorAll(`#${tabGroup} .tab`);
+        const contents = document.querySelectorAll(`#${tabGroup} .tab-content`);
+
+        // Remove active class from all tabs and hide all content
+        tabs.forEach((tab) => tab.classList.remove("active"));
+        contents.forEach((content) => content.classList.remove("active"));
+
+        // Add active class to the selected tab and show the content
+        document
+          .querySelector(`#${tabGroup} .tab[onclick="showTab('${tabId}')"]`)
+          .classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+      }
+
+      // Initialize the page to show the default iOS tab
       window.onload = function () {
-        document.getElementById("deviceType").selectedIndex = 0;
-        clearAllDropdownsAndFields();
-        document.getElementById("deviceChecklistTab").style.display = "none";
+        showDeviceTab("iOS");
+        showTab("iOS-checklistTab");
       };
     </script>
   </body>
