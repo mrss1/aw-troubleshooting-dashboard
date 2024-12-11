@@ -9,7 +9,6 @@
         --theme-color: #4a90e2;
         --theme-hover-color: #4a91e26b;
       }
-      /* General styling */
       body {
         font-family: Arial, sans-serif;
         background-color: #f4f4f9;
@@ -174,7 +173,17 @@
         </select>
       </div>
 
-      <div class="tab-content" id="deviceChecklistTab">
+      <!-- New/Existing Device Dropdown -->
+      <div class="form-group" id="deviceStatusContainer" style="display: none">
+        <label for="deviceStatus">Device Status</label>
+        <select id="deviceStatus" onchange="updateDeviceStatus()">
+          <option value="">Select Device Status</option>
+          <option value="New">New Device</option>
+          <option value="Existing">Existing Device</option>
+        </select>
+      </div>
+
+      <div class="tab-content" id="deviceChecklistTab" style="display: none">
         <div class="tabs">
           <div class="tab active" onclick="showTab('checklistTab')">
             Checklist
@@ -239,134 +248,181 @@
     </div>
 
     <script>
-      // Data structure holding troubleshooting information
       let troubleshootingData = {
         iOS: {
-          "Re-enter Password": {
-            "Prompt to enter username is not given": {
-              Cause: "Wrong username was entered",
-              CorrectiveSteps:
-                "Clear Safari 'History and Website Data' > Settings > Safari",
-              Notes:
-                "If the wrong username is entered and 'Remember this setting' is checked, prompt will not be given again.",
-            },
-            "Error 'Enter message' is given after entering username": {
-              Cause: "Request Desktop Website is turned On",
-              CorrectiveSteps:
-                "Turn 'All Websites' Off > Settings > Safari > Request Desktop Website",
-              Notes:
-                "For iPads, some iOS versions have this setting turned on by default. Must be turned off to access MyPaylinks.",
-            },
-            "Microsoft Authenticator installed": {
-              Cause: "Microsoft Authenticator is installed",
-              CorrectiveSteps:
-                "Airwatch console App tab, have user uninstall Authenticator that is not 'Managed'",
-              Notes: "App can be re-installed after password is updated.",
+          New: {
+            "Initial Setup": {
+              "Device not enrolling": {
+                Cause: "The device is not properly set up in AirWatch.",
+                CorrectiveSteps:
+                  "Ensure device is factory reset and enroll using corporate MDM instructions.",
+                Notes: "If enrollment fails repeatedly, check with MDM admin.",
+              },
             },
           },
-          "Email not Syncing": {
-            "No new emails, Unable to connect to WiFi, Other apps may lose internet access":
-              {
-                Cause:
-                  "Device record in AW Console needs to be deleted for use by another user",
+          Existing: {
+            "Re-enter Password": {
+              "Prompt to enter username is not given": {
+                Cause: "Wrong username was entered",
                 CorrectiveSteps:
-                  "Reset Network Settings > Settings > General > Transfer or Reset iPhone > Reset > Reset Network Settings > Enter passcode > Reset Network Settings",
-                Notes: "This problem is a result of a device switch.",
+                  "Clear Safari 'History and Website Data' > Settings > Safari",
+                Notes:
+                  "If the wrong username and 'Remember setting' is checked, prompt won't appear again.",
               },
+              "Error 'Enter message' after entering username": {
+                Cause: "Request Desktop Website is turned On",
+                CorrectiveSteps:
+                  "Disable 'All Websites' > Settings > Safari > Request Desktop Website",
+                Notes: "Some iOS versions default this on. Turn it off.",
+              },
+              "Microsoft Authenticator installed": {
+                Cause: "Microsoft Authenticator is installed",
+                CorrectiveSteps:
+                  "Uninstall unmanaged Authenticator via AirWatch Console, re-install managed version.",
+                Notes: "App can be re-installed after password update.",
+              },
+            },
+            "Email not Syncing": {
+              "No new emails, Unable to connect to WiFi, etc.": {
+                Cause:
+                  "Device record in AW Console needs removal for another user",
+                CorrectiveSteps:
+                  "Reset Network Settings > General > Transfer or Reset iPhone > Reset > Reset Network Settings",
+                Notes: "Issue often caused by device switch.",
+              },
+            },
           },
         },
         Mac: {
-          "WiFi Issues": {
-            "Cannot connect to WiFi": {
-              Cause: "Incorrect network settings",
-              CorrectiveSteps:
-                "Go to System Preferences > Network > WiFi > Advanced, and remove the problematic network. Then reconnect.",
-              Notes: "Make sure to verify the WiFi password is correct.",
+          New: {
+            "Initial Setup": {
+              "MDM Profile not installing": {
+                Cause: "Network issues or blocked MDM profile.",
+                CorrectiveSteps:
+                  "Check WiFi & ensure device on company network. Retry MDM installation.",
+                Notes: "Contact IT if persists.",
+              },
+            },
+          },
+          Existing: {
+            "WiFi Issues": {
+              "Cannot connect to WiFi": {
+                Cause: "Incorrect network settings",
+                CorrectiveSteps:
+                  "System Preferences > Network > WiFi > Advanced, remove problematic network, reconnect.",
+                Notes: "Verify WiFi password.",
+              },
             },
           },
         },
         Android: {
-          "App Crashing": {
-            "App crashes on launch": {
-              Cause: "Corrupted app data",
-              CorrectiveSteps:
-                "Go to Settings > Apps > [App Name] > Storage > Clear Data and Clear Cache. Restart the app.",
-              Notes: "Ensure the app is updated to the latest version.",
+          New: {
+            "Initial Setup": {
+              "Play Store missing work apps": {
+                Cause: "Work profile not configured properly.",
+                CorrectiveSteps:
+                  "Check that a managed work profile is created. Re-sync device.",
+                Notes: "Contact mobile admin if apps still missing.",
+              },
+            },
+          },
+          Existing: {
+            "App Crashing": {
+              "App crashes on launch": {
+                Cause: "Corrupted app data",
+                CorrectiveSteps:
+                  "Settings > Apps > [App Name] > Storage > Clear Data/Cache. Restart app.",
+                Notes: "Ensure app is updated.",
+              },
             },
           },
         },
       };
 
-      // Data structure holding How To information
       let howToData = {
         iOS: {
           "Reset Device": {
             Steps:
-              "1. Go to Settings > General.\n2. Tap Reset.\n3. Choose 'Erase All Content and Settings'.\n4. Enter your passcode and confirm.",
-            Notes:
-              "This will erase all data. Make sure to back up important information.",
+              "1. Settings > General\n2. Reset\n3. Erase All Content and Settings\n4. Confirm",
+            Notes: "This erases all data. Back up first.",
           },
           "Setup Email Account": {
             Steps:
-              "1. Open the Mail app.\n2. Enter your email address and password.\n3. Follow the prompts to complete setup.",
-            Notes: "For corporate email, use the provided server settings.",
+              "1. Open Mail app\n2. Enter email and password\n3. Follow prompts",
+            Notes: "Use corporate server settings.",
           },
         },
         Mac: {
           "Set Up WiFi": {
-            Steps:
-              "1. Click on the WiFi icon in the menu bar.\n2. Select the desired network.\n3. Enter the WiFi password.",
-            Notes: "Ensure the WiFi network is secure.",
+            Steps: "1. Click WiFi icon\n2. Select network\n3. Enter password",
+            Notes: "Ensure network is secure.",
           },
         },
         Android: {
           "Clear Cache": {
             Steps:
-              "1. Go to Settings > Apps.\n2. Select the app.\n3. Tap on Storage > Clear Cache.",
-            Notes: "Clearing cache can resolve many app issues.",
+              "1. Settings > Apps\n2. Select app\n3. Storage > Clear Cache",
+            Notes: "Clearing cache can fix many issues.",
           },
         },
       };
 
-      // Function to update content based on selected device type
       function updateDeviceType() {
         const deviceType = document.getElementById("deviceType").value;
+        const deviceStatusContainer = document.getElementById(
+          "deviceStatusContainer"
+        );
+        const deviceStatus = document.getElementById("deviceStatus");
         const deviceChecklistTab =
           document.getElementById("deviceChecklistTab");
 
-        // Hide all content if no device type is selected
+        // Reset everything upon device type change
+        deviceStatus.selectedIndex = 0;
+        deviceChecklistTab.style.display = "none";
+        clearAllDropdownsAndFields();
+
         if (!deviceType) {
-          deviceChecklistTab.style.display = "none";
-          clearAllDropdownsAndFields();
-          // Reset theme colors to default
-          document.documentElement.style.setProperty(
-            "--theme-color",
-            "#4a90e2"
-          );
-          document.documentElement.style.setProperty(
-            "--theme-hover-color",
-            "#4a91e26b"
-          );
+          deviceStatusContainer.style.display = "none";
+          resetThemeColors();
           return;
         }
 
-        // Show content for selected device type
-        deviceChecklistTab.style.display = "block";
+        // Show device status dropdown
+        deviceStatusContainer.style.display = "block";
+        resetThemeColorsByDevice(deviceType);
+      }
 
-        // Clear all dropdowns and fields
+      function updateDeviceStatus() {
+        const deviceType = document.getElementById("deviceType").value;
+        const deviceStatus = document.getElementById("deviceStatus").value;
+        const deviceChecklistTab =
+          document.getElementById("deviceChecklistTab");
+
+        // Clear all fields when status changes
         clearAllDropdownsAndFields();
 
-        // Force clear symptom dropdown and reset its value
-        document.getElementById("symptom").value = ""; // Reset symptom dropdown
+        if (!deviceType || !deviceStatus) {
+          deviceChecklistTab.style.display = "none";
+          return;
+        }
 
-        // Set default tab to Checklist
+        // Both deviceType and deviceStatus are selected
+        deviceChecklistTab.style.display = "block";
         showTab("checklistTab");
-        // Populate failure points and How To categories based on the selected device type
-        populateFailurePoints(deviceType);
+        populateFailurePoints(deviceType, deviceStatus);
         populateHowToCategories(deviceType);
-        // Change colors based on the device type
+      }
+
+      function resetThemeColors() {
+        document.documentElement.style.setProperty("--theme-color", "#4a90e2");
+        document.documentElement.style.setProperty(
+          "--theme-hover-color",
+          "#4a91e26b"
+        );
+      }
+
+      function resetThemeColorsByDevice(deviceType) {
         if (deviceType === "Mac") {
-          // Change to purple for Mac
           document.documentElement.style.setProperty(
             "--theme-color",
             "#800080"
@@ -376,7 +432,6 @@
             "#8000806b"
           );
         } else if (deviceType === "Android") {
-          // Change to green for Android
           document.documentElement.style.setProperty(
             "--theme-color",
             "#008000"
@@ -386,7 +441,7 @@
             "#0080006b"
           );
         } else {
-          // Default for iOS
+          // iOS default
           document.documentElement.style.setProperty(
             "--theme-color",
             "#4a90e2"
@@ -398,49 +453,36 @@
         }
       }
 
-      // Function to clear all dropdowns and fields
       function clearAllDropdownsAndFields() {
-        // Reset dropdowns
         document.getElementById("failurePoint").innerHTML =
           '<option value="">Select Failure Point</option>';
         document.getElementById("symptom").innerHTML =
           '<option value="">Select Symptom</option>';
         document.getElementById("howToCategory").innerHTML =
           '<option value="">Select Category</option>';
-
-        // Clear all form fields
         clearFields();
-
-        // Clear How To fields
         document.getElementById("howToSteps").value = "";
         document.getElementById("howToNotes").value = "";
       }
 
-      // Function to show the active tab
       function showTab(tabId) {
         const tabs = document.querySelectorAll(".tab");
         const contents = document.querySelectorAll(".tab-content");
 
-        // Remove active class from all tabs and hide all content
         tabs.forEach((tab) => tab.classList.remove("active"));
         contents.forEach((content) => content.classList.remove("active"));
 
-        // Add active class to the selected tab and show the content
         document
           .querySelector(`[onclick="showTab('${tabId}')"]`)
           .classList.add("active");
         document.getElementById(tabId).classList.add("active");
       }
 
-      // Function to populate the "How To's" dropdown
       function populateHowToCategories(deviceType) {
         const howToCategorySelect = document.getElementById("howToCategory");
-
-        // Clear current options
         howToCategorySelect.innerHTML =
           '<option value="">Select Category</option>';
 
-        // Populate categories for the selected device type
         for (const category in howToData[deviceType]) {
           const option = document.createElement("option");
           option.value = category;
@@ -455,11 +497,9 @@
         const howToSteps = document.getElementById("howToSteps");
         const howToNotes = document.getElementById("howToNotes");
 
-        // Clear fields
         howToSteps.value = "";
         howToNotes.value = "";
 
-        // Populate fields if a valid category is selected
         if (
           deviceType &&
           howToCategory &&
@@ -470,42 +510,44 @@
         }
       }
 
-      // Function to populate failure points dropdown
-      function populateFailurePoints(deviceType) {
+      function populateFailurePoints(deviceType, deviceStatus) {
         const failurePointSelect = document.getElementById("failurePoint");
-
-        // Clear current options
         failurePointSelect.innerHTML =
           '<option value="">Select Failure Point</option>';
 
-        // Populate failure points for the selected device type
-        for (const failurePoint in troubleshootingData[deviceType]) {
-          const option = document.createElement("option");
-          option.value = failurePoint;
-          option.textContent = failurePoint;
-          failurePointSelect.appendChild(option);
+        if (
+          troubleshootingData[deviceType] &&
+          troubleshootingData[deviceType][deviceStatus]
+        ) {
+          for (const failurePoint in troubleshootingData[deviceType][
+            deviceStatus
+          ]) {
+            const option = document.createElement("option");
+            option.value = failurePoint;
+            option.textContent = failurePoint;
+            failurePointSelect.appendChild(option);
+          }
         }
       }
 
-      // Function to update symptoms based on selected failure point
       function updateSymptoms() {
         const deviceType = document.getElementById("deviceType").value;
-        const failurePointSelect = document.getElementById("failurePoint");
+        const deviceStatus = document.getElementById("deviceStatus").value;
+        const failurePoint = document.getElementById("failurePoint").value;
         const symptomSelect = document.getElementById("symptom");
 
-        const failurePoint = failurePointSelect.value;
-
-        // Clear symptoms dropdown and form details
         symptomSelect.innerHTML = '<option value="">Select Symptom</option>';
         clearFields();
 
-        // Populate symptoms if a valid failure point is selected
         if (
           deviceType &&
+          deviceStatus &&
           failurePoint &&
-          troubleshootingData[deviceType][failurePoint]
+          troubleshootingData[deviceType][deviceStatus][failurePoint]
         ) {
-          for (const symptom in troubleshootingData[deviceType][failurePoint]) {
+          for (const symptom in troubleshootingData[deviceType][deviceStatus][
+            failurePoint
+          ]) {
             const option = document.createElement("option");
             option.value = symptom;
             option.textContent = symptom;
@@ -514,46 +556,41 @@
         }
       }
 
-      // Function to populate symptom details based on selection
       function populateDetails() {
         const deviceType = document.getElementById("deviceType").value;
-        const failurePointSelect = document.getElementById("failurePoint");
-        const symptomSelect = document.getElementById("symptom");
-
-        const failurePoint = failurePointSelect.value;
-        const symptom = symptomSelect.value;
+        const deviceStatus = document.getElementById("deviceStatus").value;
+        const failurePoint = document.getElementById("failurePoint").value;
+        const symptom = document.getElementById("symptom").value;
 
         const correctiveSteps = document.getElementById("correctiveSteps");
         const cause = document.getElementById("cause");
         const notes = document.getElementById("notes");
 
-        // Clear the form if no failure point or symptom is selected
         if (
           !deviceType ||
+          !deviceStatus ||
           !failurePoint ||
           !symptom ||
-          !troubleshootingData[deviceType][failurePoint] ||
-          !troubleshootingData[deviceType][failurePoint][symptom]
+          !troubleshootingData[deviceType][deviceStatus][failurePoint] ||
+          !troubleshootingData[deviceType][deviceStatus][failurePoint][symptom]
         ) {
           clearFields();
           return;
         }
 
-        // Populate form details based on the selected symptom
-        const details = troubleshootingData[deviceType][failurePoint][symptom];
+        const details =
+          troubleshootingData[deviceType][deviceStatus][failurePoint][symptom];
         correctiveSteps.value = details.CorrectiveSteps;
         cause.value = details.Cause;
         notes.value = details.Notes;
       }
 
-      // Function to clear all fields
       function clearFields() {
         document.getElementById("correctiveSteps").value = "";
         document.getElementById("cause").value = "";
         document.getElementById("notes").value = "";
       }
 
-      // Initialize dropdowns and clear fields on page load
       window.onload = function () {
         document.getElementById("deviceType").selectedIndex = 0;
         clearAllDropdownsAndFields();
