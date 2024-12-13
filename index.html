@@ -16,7 +16,6 @@
         margin: 0;
         padding: 20px;
         display: flex;
-        justify-content: center;
         flex-direction: column;
         align-items: center;
       }
@@ -26,6 +25,17 @@
         color: var(--theme-color);
       }
 
+      .main-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1200px;
+        margin-top: 20px;
+        gap: 20px;
+      }
+
+      /* Main content container */
       .container {
         background-color: #ffffff;
         border-radius: 8px;
@@ -33,6 +43,18 @@
         padding: 20px;
         width: 100%;
         max-width: 600px;
+        box-sizing: border-box;
+      }
+
+      /* Search container styling */
+      .search-container {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        max-width: 300px;
+        box-sizing: border-box;
       }
 
       .tabs {
@@ -128,6 +150,7 @@
         box-shadow: 1px 0 1 0 rgba(0, 0, 0, 0.171);
       }
 
+      /* Responsive adjustments */
       @media (max-width: 768px) {
         .container {
           padding: 15px;
@@ -140,6 +163,17 @@
         select,
         textarea {
           font-size: 14px;
+        }
+      }
+
+      @media (max-width: 960px) {
+        .main-wrapper {
+          flex-direction: column;
+          align-items: center;
+        }
+        .search-container {
+          max-width: 600px;
+          width: 100%;
         }
       }
 
@@ -157,97 +191,136 @@
           padding: 10px 15px;
         }
       }
+
+      .search-results ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .search-results li {
+        margin-bottom: 10px;
+      }
+
+      .search-results a {
+        color: var(--theme-color);
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      .search-results a:hover {
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>AirWatch Troubleshooting Dashboard</h1>
+    <h1>AirWatch Troubleshooting Dashboard</h1>
+    <div class="main-wrapper">
+      <div class="container">
+        <div class="form-group">
+          <label for="deviceType">Device Type</label>
+          <select id="deviceType" onchange="updateDeviceType()">
+            <option value="">Select Device Type</option>
+            <option value="iOS">iPhone/iPad</option>
+            <option value="Mac">Mac</option>
+            <option value="Android">Android</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="deviceType">Device Type</label>
-        <select id="deviceType" onchange="updateDeviceType()">
-          <option value="">Select Device Type</option>
-          <option value="iOS">iPhone/iPad</option>
-          <option value="Mac">Mac</option>
-          <option value="Android">Android</option>
-        </select>
+        <!-- New/Existing Device Dropdown -->
+        <div
+          class="form-group"
+          id="deviceStatusContainer"
+          style="display: none"
+        >
+          <label for="deviceStatus">Device Status</label>
+          <select id="deviceStatus" onchange="updateDeviceStatus()">
+            <option value="">Select Device Status</option>
+            <option value="New">New Device</option>
+            <option value="Existing">Existing Device</option>
+          </select>
+        </div>
+
+        <div class="tab-content" id="deviceChecklistTab" style="display: none">
+          <div class="tabs">
+            <div class="tab active" onclick="showTab('checklistTab')">
+              Checklist
+            </div>
+            <div class="tab" onclick="showTab('howToTab')">How To's</div>
+          </div>
+
+          <div class="tab-content active" id="checklistTab">
+            <div class="form-group">
+              <label for="failurePoint">Failure Point</label>
+              <select id="failurePoint" onchange="updateSymptoms()">
+                <option value="">Select Failure Point</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="symptom">Symptom</label>
+              <select id="symptom" onchange="populateDetails()">
+                <option value="">Select Symptom</option>
+              </select>
+            </div>
+
+            <div class="text-area-container">
+              <div class="form-group">
+                <label for="correctiveSteps">Corrective Steps</label>
+                <textarea id="correctiveSteps" rows="4" readonly></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="cause">Cause</label>
+                <textarea id="cause" rows="2" readonly></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" rows="2" readonly></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="howToTab">
+            <h2>How To's</h2>
+
+            <div class="form-group">
+              <label for="howToCategory">Category</label>
+              <select id="howToCategory" onchange="updateHowToSteps()">
+                <option value="">Select Category</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="howToSteps">Steps</label>
+              <textarea id="howToSteps" rows="6" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="howToNotes">Notes</label>
+              <textarea id="howToNotes" rows="3" readonly></textarea>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- New/Existing Device Dropdown -->
-      <div class="form-group" id="deviceStatusContainer" style="display: none">
-        <label for="deviceStatus">Device Status</label>
-        <select id="deviceStatus" onchange="updateDeviceStatus()">
-          <option value="">Select Device Status</option>
-          <option value="New">New Device</option>
-          <option value="Existing">Existing Device</option>
-        </select>
-      </div>
-
-      <div class="tab-content" id="deviceChecklistTab" style="display: none">
-        <div class="tabs">
-          <div class="tab active" onclick="showTab('checklistTab')">
-            Checklist
-          </div>
-          <div class="tab" onclick="showTab('howToTab')">How To's</div>
+      <!-- Separate Search Container -->
+      <div class="search-container">
+        <div class="form-group">
+          <label for="searchBar">Search</label>
+          <input
+            type="text"
+            id="searchBar"
+            placeholder="Search for failure points, symptoms, or how-to's"
+            oninput="filterSearch()"
+          />
         </div>
-
-        <div class="tab-content active" id="checklistTab">
-          <div class="form-group">
-            <label for="failurePoint">Failure Point</label>
-            <select id="failurePoint" onchange="updateSymptoms()">
-              <option value="">Select Failure Point</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="symptom">Symptom</label>
-            <select id="symptom" onchange="populateDetails()">
-              <option value="">Select Symptom</option>
-            </select>
-          </div>
-
-          <div class="text-area-container">
-            <div class="form-group">
-              <label for="correctiveSteps">Corrective Steps</label>
-              <textarea id="correctiveSteps" rows="4" readonly></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="cause">Cause</label>
-              <textarea id="cause" rows="2" readonly></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="notes">Notes</label>
-              <textarea id="notes" rows="2" readonly></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-content" id="howToTab">
-          <h2>How To's</h2>
-
-          <div class="form-group">
-            <label for="howToCategory">Category</label>
-            <select id="howToCategory" onchange="updateHowToSteps()">
-              <option value="">Select Category</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="howToSteps">Steps</label>
-            <textarea id="howToSteps" rows="6" readonly></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="howToNotes">Notes</label>
-            <textarea id="howToNotes" rows="3" readonly></textarea>
-          </div>
-        </div>
+        <div class="search-results" id="searchResults"></div>
       </div>
     </div>
 
     <script>
+      // Data structure holding troubleshooting information
       let troubleshootingData = {
         iOS: {
           New: {
@@ -589,6 +662,139 @@
         document.getElementById("correctiveSteps").value = "";
         document.getElementById("cause").value = "";
         document.getElementById("notes").value = "";
+      }
+
+      // Filter search results and make them clickable
+      function filterSearch() {
+        const query = document.getElementById("searchBar").value.toLowerCase();
+        const resultsContainer = document.getElementById("searchResults");
+        resultsContainer.innerHTML = "";
+
+        if (!query) {
+          return;
+        }
+
+        let results = [];
+
+        // Search in troubleshooting data
+        for (const device in troubleshootingData) {
+          for (const status in troubleshootingData[device]) {
+            for (const failurePoint in troubleshootingData[device][status]) {
+              // Match failure points
+              if (failurePoint.toLowerCase().includes(query)) {
+                results.push({
+                  deviceType: device,
+                  deviceStatus: status,
+                  failurePoint: failurePoint,
+                  symptom: null,
+                  howToCategory: null,
+                  label: `Device: ${device}, Status: ${status}, Failure Point: ${failurePoint}`,
+                });
+              }
+              for (const symptom in troubleshootingData[device][status][
+                failurePoint
+              ]) {
+                // Match symptoms
+                if (symptom.toLowerCase().includes(query)) {
+                  results.push({
+                    deviceType: device,
+                    deviceStatus: status,
+                    failurePoint: failurePoint,
+                    symptom: symptom,
+                    howToCategory: null,
+                    label: `Device: ${device}, Status: ${status}, Symptom: ${symptom}`,
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        // Search in howTo data
+        for (const device in howToData) {
+          for (const category in howToData[device]) {
+            let steps = howToData[device][category].Steps.toLowerCase();
+            let notes = howToData[device][category].Notes.toLowerCase();
+
+            let matched = false;
+
+            if (category.toLowerCase().includes(query)) {
+              matched = true;
+            } else if (steps.includes(query)) {
+              matched = true;
+            } else if (notes.includes(query)) {
+              matched = true;
+            }
+
+            if (matched) {
+              results.push({
+                deviceType: device,
+                deviceStatus: null,
+                failurePoint: null,
+                symptom: null,
+                howToCategory: category,
+                label: `Device: ${device}, How To: ${category}`,
+              });
+            }
+          }
+        }
+
+        if (results.length === 0) {
+          resultsContainer.innerHTML = "No results found.";
+        } else {
+          let html = "<ul>";
+          results.forEach((r) => {
+            html += `<li><a href="#" onclick="selectSearchResult('${
+              r.deviceType
+            }','${r.deviceStatus || ""}','${r.failurePoint || ""}','${
+              r.symptom || ""
+            }','${r.howToCategory || ""}')">${r.label}</a></li>`;
+          });
+          html += "</ul>";
+          resultsContainer.innerHTML = html;
+        }
+      }
+
+      // When a search result is clicked, select the result in the dashboard
+      function selectSearchResult(
+        deviceType,
+        deviceStatus,
+        failurePoint,
+        symptom,
+        howToCategory
+      ) {
+        // First, set the deviceType if available
+        document.getElementById("deviceType").value = deviceType || "";
+        updateDeviceType();
+
+        if (deviceStatus) {
+          document.getElementById("deviceStatus").value = deviceStatus;
+          updateDeviceStatus();
+        }
+
+        // If howToCategory is provided, we show the howToTab
+        if (howToCategory && howToCategory !== "null") {
+          // Switch to How To tab
+          showTab("howToTab");
+          document.getElementById("howToCategory").value = howToCategory;
+          updateHowToSteps();
+        } else {
+          // Otherwise, we deal with the failurePoint and symptom
+          if (failurePoint && failurePoint !== "null") {
+            document.getElementById("failurePoint").value = failurePoint;
+            updateSymptoms();
+          }
+
+          if (symptom && symptom !== "null") {
+            document.getElementById("symptom").value = symptom;
+            populateDetails();
+            // Switch to checklist tab
+            showTab("checklistTab");
+          }
+        }
+
+        // Scroll to top of the page or dashboard
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       window.onload = function () {
